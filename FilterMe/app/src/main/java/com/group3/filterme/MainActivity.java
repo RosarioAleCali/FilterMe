@@ -1,11 +1,15 @@
 package com.group3.filterme;
 
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
@@ -14,15 +18,23 @@ import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.imgproc.Imgproc;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static org.opencv.android.CameraBridgeViewBase.CAMERA_ID_FRONT;
 
 public class MainActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2 {
 
-    private static  String TAG = "MainActivity";
+    private static String TAG = "MainActivity";
+    private static String successMessage = "Photo Taken ;)";
+    private static String errorMessage = "Error saving photo :(";
     JavaCameraView mJavaCameraView;
-    Mat mRgba, imgGrey, imgCanny, mRgbaT;
+    Mat mRgba, imgGrey, imgCanny;
     ImageButton cameraButton, galleryButton;
+    Boolean success = false;
     BaseLoaderCallback mLoaderCallBack = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
@@ -62,7 +74,27 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
             @Override
             public void onClick(View view) {
                 // Take a picture :)
+                Mat mIntermediateMat = new Mat();
+                Imgproc.cvtColor(mRgba, mIntermediateMat, Imgproc.COLOR_RGBA2BGR, 3);
 
+                // Get current Date and Time
+                String currentDateTimeString = new SimpleDateFormat("YYYYMMDDHHmmss").format(new Date());
+
+                // Create Path + Filename
+                String filename = Environment.getExternalStorageDirectory() + "/" + Environment.DIRECTORY_DCIM + "/Camera/";
+                filename += currentDateTimeString + ".jpg";
+
+                // Save Image
+                success = Imgcodecs.imwrite(filename, mIntermediateMat);
+
+                if (success == true) {
+                    Toast.makeText(getApplicationContext(), successMessage, Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "SUCCESS writing image to external storage");
+                }
+                else {
+                    Log.d(TAG, "Fail writing image to external storage");
+                    Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_SHORT).show();
+                }
             }
         });
         // Set Up Gallery Button
@@ -71,7 +103,8 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
             @Override
             public void onClick(View view) {
                 // Go to gallery :)
-
+                Intent openGallery = new Intent(Intent.ACTION_VIEW, Uri.parse("content://media/internal/images/media"));
+                startActivity(openGallery);
             }
         });
     }
