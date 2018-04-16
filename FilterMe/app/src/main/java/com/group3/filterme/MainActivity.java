@@ -4,6 +4,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.SurfaceView;
+import android.view.View;
+import android.widget.ImageButton;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
@@ -12,13 +14,15 @@ import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.imgproc.Imgproc;
+
+import static org.opencv.android.CameraBridgeViewBase.CAMERA_ID_FRONT;
 
 public class MainActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2 {
 
     private static  String TAG = "MainActivity";
     JavaCameraView mJavaCameraView;
-    Mat mRgba, imgGrey, imgCanny;
+    Mat mRgba, imgGrey, imgCanny, mRgbaT;
+    ImageButton cameraButton, galleryButton;
     BaseLoaderCallback mLoaderCallBack = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
@@ -47,9 +51,29 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         mJavaCameraView = (JavaCameraView)findViewById(R.id.java_camera_view);
         // Make camera visible
         mJavaCameraView.setVisibility(SurfaceView.VISIBLE);
+        // Set Frontal Camera
+        mJavaCameraView.setCameraIndex(CAMERA_ID_FRONT);
         // Set a listener for the camera
         mJavaCameraView.setCvCameraViewListener(this);
 
+        // Set Up Camera Button
+        cameraButton = (ImageButton)findViewById(R.id.cameraButton);
+        cameraButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Take a picture :)
+
+            }
+        });
+        // Set Up Gallery Button
+        galleryButton = (ImageButton)findViewById(R.id.galleryButton);
+        galleryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Go to gallery :)
+
+            }
+        });
     }
 
     /**
@@ -107,10 +131,6 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         mRgba = inputFrame.rgba();
 
-        // Some Basic Image Processing
-        Imgproc.cvtColor(mRgba, imgGrey, Imgproc.COLOR_RGB2GRAY);
-        Imgproc.Canny(imgGrey, imgCanny, 50, 150);
-
-        return imgCanny;
+        return mRgba;
     }
 }
