@@ -260,17 +260,17 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
                 maxFaceSize = faces_.get(i).height * 1.5;
                 Point centre = new Point(faces_.get(i).x + faces_.get(i).width * 0.5, faces_.get(i).y + faces_.get(i).height * 0.55);
 
-//                // START JUNK
-//                Imgproc.rectangle(mRgba, new Point(centre.x - faces_.get(i).width / 2, centre.y - faces_.get(i).width / 2),
-//                        new Point(centre.x + faces_.get(i).width / 2, centre.y + faces_.get(i).width / 2), new Scalar(0,0,0));
+//              // START JUNK
+                Imgproc.rectangle(mRgba, new Point(centre.x - faces_.get(i).width / 2, centre.y - faces_.get(i).width / 2),
+                       new Point(centre.x + faces_.get(i).width / 2, centre.y + faces_.get(i).width / 2), new Scalar(0,0,0));
 //                // Create Path + Filename
-//                String filename = Environment.getExternalStorageDirectory() + "/" + Environment.DIRECTORY_DCIM + "/Camera/file.jpg";
+                String filename = Environment.getExternalStorageDirectory() + "/" + Environment.DIRECTORY_DCIM + "/Camera/file.jpg";
 //
 //                // Save Image
 //                success = Imgcodecs.imwrite(filename, mRgba);
 //                // END JUNK
 
-                filterMe(centre, new Size(faces_.get(i).width, faces_.get(i).height));
+                //filterMe(centre, new Size(faces_.get(i).width, faces_.get(i).height));
             }
         }
     }
